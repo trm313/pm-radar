@@ -30,6 +30,7 @@ const AddSheetForm = ({ handleAddSheet }) => {
           name: res.data.properties.title,
         };
         setFormIdInput("");
+        setErrorMessage("");
         handleAddSheet(newForm);
       })
       .catch((err) => {
