@@ -160,7 +160,14 @@ export default function App() {
   }, [forms, activeForm, user]);
 
   return (
-    <Flex direction='column' alignItems='center' px='4' maxW='4xl' mx='auto'>
+    <Flex
+      direction='column'
+      alignItems='center'
+      px='4'
+      py='16'
+      maxW='4xl'
+      mx='auto'
+    >
       <GetStartedContent />
 
       <Flex direction='column' w='full' maxW='2xl'>
