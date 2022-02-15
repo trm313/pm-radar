@@ -1,20 +1,38 @@
-import React from 'react';
-import { Flex, Text } from '@chakra-ui/react';
-import { Radar } from 'react-chartjs-2';
+import React from "react";
+import { Flex, Heading } from "@chakra-ui/react";
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Radar } from "react-chartjs-2";
+
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend
+);
 
 const labels = [
-  'Fluency with Data',
-  'Voice of the Customer',
-  'User Experience Design',
-  'Business Outcome Ownership',
-  'Product Vision & Roadmappoing',
-  'Strategic Impact',
-  'Stakeholder Management',
-  'Team Leadership',
-  'Managing Up',
-  'Feature Specification',
-  'Product Delivery',
-  'Quality Assurance',
+  "Fluency with Data",
+  "Voice of the Customer",
+  "User Experience Design",
+  "Business Outcome Ownership",
+  "Product Vision & Roadmappoing",
+  "Strategic Impact",
+  "Stakeholder Management",
+  "Team Leadership",
+  "Managing Up",
+  "Feature Specification",
+  "Product Delivery",
+  "Quality Assurance",
 ];
 
 const options = {
@@ -80,27 +98,30 @@ const optionsMinimal = {
 };
 
 let sizes = {
-  sm: 'xs',
-  md: '4xl',
-  lg: '6xl',
-  auto: 'full',
+  sm: "xs",
+  md: "4xl",
+  lg: "6xl",
+  auto: "full",
 };
 
-const RadarChart = ({ values, minimal = false, size = sizes.auto }) => {
+const RadarChart = ({ form, values, minimal = false, size = sizes.auto }) => {
   let data = {
     labels,
     datasets: [
       {
-        label: 'Proficiencies',
+        label: "Proficiencies",
         data: values,
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 4,
       },
     ],
   };
   return (
-    <Flex width={sizes[size]}>
+    <Flex direction='column' alignItems='center' width={sizes[size]} mt='12'>
+      <Heading fontSize='lg' fontWeight='bold'>
+        {form.name}
+      </Heading>
       <Radar data={data} options={minimal ? optionsMinimal : options} />
     </Flex>
   );

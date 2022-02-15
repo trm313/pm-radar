@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Flex, Text, Heading, Button } from '@chakra-ui/react';
-import './style.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Flex, Text, Heading, Button, Image } from "@chakra-ui/react";
+import "./style.css";
 
+import formToSheetsBtnImage from "./Assets/formToSheetsBtn.png";
 // Components
-import RadarChart from './Components/RadarChart';
-import AddSheetForm from './Components/AddSheetForm';
-import GoogleLoginBtn from './Components/GoogleLoginBtn';
-import LogoutBtn from './Components/LogoutBtn';
-import GetStartedContent from './Components/GetStartedContent';
+import RadarChart from "./Components/RadarChart";
+import AddSheetForm from "./Components/AddSheetForm";
+import GoogleLoginBtn from "./Components/GoogleLoginBtn";
+import LogoutBtn from "./Components/LogoutBtn";
+import GetStartedContent from "./Components/GetStartedContent";
+import FormsList from "./Components/FormsList";
 
 // Helper Functions
 
@@ -74,11 +76,13 @@ export default function App() {
 
   const logout = () => {
     setUser(null);
+    setFormData(null);
+    setActiveForm(null);
   };
 
   // LocalStorage Interactions
   const getDataFromLocalStorage = () => {
-    const key = 'forms';
+    const key = "forms";
     if (localStorage.getItem(key)) {
       let storedForms = JSON.parse(localStorage.getItem(key));
       setForms(storedForms);
@@ -89,7 +93,7 @@ export default function App() {
   };
 
   const storeDataInLocalStorage = () => {
-    localStorage.setItem('forms', JSON.stringify(forms));
+    localStorage.setItem("forms", JSON.stringify(forms));
     setStorageNeedsUpdating(false);
   };
 
@@ -125,10 +129,10 @@ export default function App() {
   useEffect(() => {
     if (user?.accessToken) {
       axios.defaults.headers.common[
-        'Authorization'
+        "Authorization"
       ] = `Bearer ${user.accessToken}`;
     } else {
-      axios.defaults.headers.common['Authorization'] = '';
+      axios.defaults.headers.common["Authorization"] = "";
     }
   }, [user]);
 
@@ -156,45 +160,36 @@ export default function App() {
   }, [forms, activeForm, user]);
 
   return (
-    <Flex direction="column" alignItems="center">
-      <Heading>Get Spikey</Heading>
-      <Text>Product Manager Radar Chart</Text>
-
+    <Flex direction='column' alignItems='center' px='4' maxW='4xl' mx='auto'>
       <GetStartedContent />
 
-      {user ? (
-        <LogoutBtn onLogout={logout} />
-      ) : (
-        <GoogleLoginBtn onLogin={login} />
-      )}
+      <Flex direction='column' w='full' maxW='2xl'>
+        <Heading size='lg' display='flex' alignItems='center' my='4'>
+          {" "}
+          <Image src={formToSheetsBtnImage} /> My Surveys
+        </Heading>
 
-      <AddSheetForm handleAddSheet={handleAddSheet} />
+        {!user && <GoogleLoginBtn onLogin={login} />}
 
-      <Flex direction="column">
-        <Text>Saved Forms</Text>
-        {forms.map((form, index) => (
-          <Flex
-            key={`saved-form-${index}`}
-            onClick={() => setActiveForm(form)}
-            direction="column"
-            cursor="pointer"
-            p="4"
-            border="1px"
-            borderColor="gray.200"
-            borderRadius="10"
-          >
-            <Text>{form.name}</Text>
-            <Text fontSize="xs">{form.id}</Text>
-          </Flex>
-        ))}
+        {user && (
+          <FormsList
+            forms={forms}
+            activeForm={activeForm}
+            onSelect={selectForm}
+          />
+        )}
+        {user && <AddSheetForm handleAddSheet={handleAddSheet} />}
+
+        {user && <LogoutBtn onLogout={logout} />}
+
+        {formData && formData.responses && (
+          <RadarChart
+            form={activeForm}
+            values={compileAveragesFromAllResponses(formData.responses)}
+            size='auto'
+          />
+        )}
       </Flex>
-
-      {formData && formData.responses && (
-        <RadarChart
-          values={compileAveragesFromAllResponses(formData.responses)}
-          size="auto"
-        />
-      )}
     </Flex>
   );
 }
